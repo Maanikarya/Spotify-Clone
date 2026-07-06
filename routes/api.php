@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ArtistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SongController;
@@ -10,9 +11,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::resource('songs' , SongController::class);
 
-// Route::get('/createSong' ,  [SongController::class , 'createSong']);
-
-Route::get('/createSong', [SongController::class, 'createSong']);
-Route::get('/createPlaylist' , [PlaylistController::class , 'createPlaylist']);
+Route::apiResource('artists' , ArtistController::class);

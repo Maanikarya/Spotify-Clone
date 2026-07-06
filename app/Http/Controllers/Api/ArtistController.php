@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreArtistRequest;
+use App\Http\Requests\UpdateArtistRequest;
+use App\Http\Resources\ArtistResource;
+use App\Models\Artist;
 
 class ArtistController extends Controller
 {
@@ -12,54 +15,66 @@ class ArtistController extends Controller
      */
     public function index()
     {
-        //
+       $artists = Artist::latest()->paginate(10);
+        return ArtistResource::collection($artists)
+                ->additional([
+                    'success' => true,
+                    'message' => 'Artist Data reterived successfuly!',
+                ]);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the Artist data.
      */
-    public function create()
-    {
-        //
+    public function show(Artist $artist){
+        return (new ArtistResource($artist))
+                ->additional([
+                    'success' => true,
+                    'message' => 'Artist Data reterived successfuly!',
+                ]);
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreArtistRequest $request)
     {
-        //
+         $artist = Artist::create($request->validated());
+
+        return (new ArtistResource($artist))
+                ->additional([
+                    'success' => true,
+                    'message' => 'Artist Created successfuly!',
+                    'data' => null
+                ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateArtistRequest $request, Artist $artist)
     {
-        //
+        $artist->update($request->validated());
+
+        return (new ArtistResource($artist))
+                ->additional([
+                    'success' => true,
+                    'message' => 'Artist Updated successfuly!',
+                ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Artist $artist)
     {
-        //
+        $artist->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Artist deleted successfully!',
+        ]);
     }
 }
