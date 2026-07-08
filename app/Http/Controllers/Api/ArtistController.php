@@ -7,21 +7,31 @@ use App\Http\Requests\StoreArtistRequest;
 use App\Http\Requests\UpdateArtistRequest;
 use App\Http\Resources\ArtistResource;
 use App\Models\Artist;
+use App\Services\ArtistService;
+use Illuminate\Http\Request;
 
 class ArtistController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $req , ArtistService  $artistService)
     {
-       $artists = Artist::latest()->paginate(10);
+        $req->validate([
+            'per_page' => 'nullable|integer|min:1',
+            'page'     => 'nullable|integer|min:1',
+            'search'   => 'nullable|string|min:3',
+        ]);
+
+        $artists = $artistService->getArtists($req);
+
         return ArtistResource::collection($artists)
-                ->additional([
-                    'success' => true,
-                    'message' => 'Artist Data reterived successfuly!',
-                ]);
+            ->additional([
+                'success' => true,
+                'message' => 'Artist data retrieved successfully!',
+            ]);
     }
+
 
     /**
      * Show the Artist data.
